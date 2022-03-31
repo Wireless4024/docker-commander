@@ -23,7 +23,7 @@ func main() {
 		panic("TOKEN env is missing")
 	}
 
-	app.Get("/", func(ctx *fiber.Ctx) error {
+	trigger := func(ctx *fiber.Ctx) error {
 		reqToken := ctx.Query("token")
 		if len(reqToken) == 0 {
 			reqToken = ctx.GetReqHeaders()["X-Gitlab-Token"]
@@ -41,7 +41,10 @@ func main() {
 			return err
 		}
 		return ctx.SendStatus(200)
-	})
+	}
+
+	app.Get("/", trigger)
+	app.Post("/", trigger)
 
 	listen := os.Getenv("LISTEN")
 	if len(listen) == 0 {
