@@ -25,7 +25,11 @@ func main() {
 
 	app.Get("/", func(ctx *fiber.Ctx) error {
 		reqToken := ctx.Query("token")
+		if len(reqToken) == 0 {
+			reqToken = ctx.GetReqHeaders()["X-Gitlab-Token"]
+		}
 		if reqToken != token {
+
 			if err := ctx.SendStatus(400); err != nil {
 				return err
 			}
